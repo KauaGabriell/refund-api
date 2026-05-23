@@ -16,5 +16,5 @@ export const errorHandling: ErrorRequestHandler = (
       .status(400)
       .json({ message: "Validation Error", issues: z.treeifyError(error) });
 
-  return response.status(500).json({ message: "Internal Server Errro" });
+  return response.status(500).json({ message: "Internal Server Error" });
 };
