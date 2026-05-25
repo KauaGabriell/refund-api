@@ -82,6 +82,18 @@ class RefundController {
       pagination,
     });
   }
+  async show(request: Request, response: Response) {
+    const queryParams = z.object({
+      refundId: z.uuid(),
+    });
+    const { refundId } = queryParams.parse(request.params);
+
+    const refund = await prisma.refunds.findUnique({
+      where: { id: refundId },
+      include: { user: { select: { name: true, email: true, role: true } } },
+    });
+    return response.status(200).json(refund);
+  }
 }
 
 export { RefundController };
