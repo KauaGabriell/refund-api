@@ -17,7 +17,7 @@ enum Category {
   others
   services
   transport
-  accommodantion
+  accommodation
 }
 
 model User {
