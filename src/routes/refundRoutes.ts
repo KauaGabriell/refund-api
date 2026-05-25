@@ -1,9 +1,14 @@
 import { Router } from "express";
 import { RefundController } from "../controllers/refundController.js";
+import { verifyUserAuthorization } from "../middlewares/verifyUserAuthorization.js";
 
 const refundRoutes = Router();
 const refundController = new RefundController();
 
-refundRoutes.post("/", refundController.create);
+refundRoutes.post(
+  "/",
+  verifyUserAuthorization(["employee"]),
+  refundController.create,
+);
 
 export { refundRoutes };
