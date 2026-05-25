@@ -10,5 +10,10 @@ refundRoutes.post(
   verifyUserAuthorization(["employee"]),
   refundController.create,
 );
+refundRoutes.get(
+  "/",
+  verifyUserAuthorization(["manager"]),
+  refundController.index,
+);
 
 export { refundRoutes };

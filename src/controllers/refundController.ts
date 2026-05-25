@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import type { Prisma } from "../generated/prisma/client.js";
 import { z } from "zod";
 import { prisma } from "../libs/prisma.js";
 import { AppError } from "../utils/AppError.js";
@@ -33,6 +34,53 @@ class RefundController {
     });
 
     return response.status(200).json(refund);
+  }
+  async index(request: Request, response: Response) {
+    const queryParams = z.object({
+      name: z.string().optional().default(""),
+      page: z.coerce.number().int().positive().optional().default(1),
+      perPage: z.coerce.number().int().positive().optional().default(10),
+    });
+    const { name, page, perPage } = queryParams.parse(request.query);
+    const where: Prisma.RefundsWhereInput = {
+      user: {
+        name: {
+          contains: name.trim(),
+        },
+      },
+    };
+    const skip = (page - 1) * perPage;
+
+    const [refunds, total] = await Promise.all([
+      prisma.refunds.findMany({
+        where,
+        skip,
+        take: perPage,
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true,
+            },
+          },
+        },
+      }),
+      prisma.refunds.count({ where }),
+    ]);
+    const pagination = {
+      page,
+      perPage,
+      total,
+      totalPages: Math.ceil(total / perPage),
+    };
+
+    return response.status(200).json({
+      refunds,
+      pagination,
+    });
   }
 }
 
