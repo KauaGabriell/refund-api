@@ -1,10 +1,27 @@
-# Refund API
+﻿# Refund API
 
-## Introdução
+API do sistema **Refund**, responsável por autenticação, autorização, cadastro de usuários, criação de solicitações de reembolso, upload de comprovantes e consulta paginada de reembolsos.
 
-Projeto `refund-api` para gerenciamento simples de solicitações de reembolso. A API permite cadastrar usuários, autenticar sessões, controlar permissões por perfil, criar e consultar reembolsos, fazer upload de comprovantes e servir arquivos enviados.
+Este projeto funciona em conjunto com o frontend [`refund-frontend`](https://github.com/KauaGabriell/refund-frontend), já configurado para consumir a API em `http://localhost:1111`.
 
-Este é um projeto de estudo utilizado para praticar conceitos de backend com Node.js e TypeScript, incluindo construção de APIs REST com Express, validação com Zod, autenticação JWT, autorização por roles, criptografia de senhas, upload de arquivos com Multer, persistência com Prisma e PostgreSQL, migrations, paginação e tratamento centralizado de erros.
+> [!NOTE]
+> Este foi um projeto de estudo da Rocketseat. Aprender os conceitos de backend, autenticação, permissões por perfil, upload de arquivos, Prisma, validação e integração com o frontend foi difícil em vários momentos. Com prática, tentativa, erro e repetição, ficou mais claro como as partes se conectam. A ideia é continuar praticando para dominar melhor o conteúdo.
+
+## Sobre
+
+A API atende dois perfis principais:
+
+- **Employee**: cria solicitações de reembolso e envia comprovantes.
+- **Manager**: lista, filtra e visualiza solicitações de reembolso.
+
+Ela foi criada para ser usada pelo frontend do projeto, mas também pode ser testada diretamente por ferramentas como Insomnia, Postman ou HTTP Client.
+
+## Projeto relacionado
+
+- [refund-frontend](https://github.com/KauaGabriell/refund-frontend)
+
+> [!IMPORTANT]
+> Execute esta API antes de iniciar o frontend. O frontend já está linkado com esta API usando `http://localhost:1111` em sua configuração do Axios.
 
 ## Stack
 
@@ -17,29 +34,55 @@ Este é um projeto de estudo utilizado para praticar conceitos de backend com No
 - JWT
 - Bcrypt
 - Multer
-- Biome
 - Docker Compose
+- Biome
 
 ## Funcionalidades
 
-- Cadastro de usuários com senha criptografada
+- Cadastro de usuários
 - Login com JWT
+- Criptografia de senhas com Bcrypt
 - Autenticação via `Authorization: Bearer <token>`
 - Autorização por perfil `employee` e `manager`
-- Criação e listagem paginada de reembolsos
+- Criação de reembolsos
+- Listagem paginada de reembolsos
 - Busca de reembolsos por nome do usuário
-- Upload de imagens para comprovantes
+- Consulta de detalhe de reembolso
+- Upload de comprovantes
+- Servir arquivos enviados via rota estática `/uploads`
+- Validação de dados com Zod
 - Tratamento centralizado de erros
 
 ## Requisitos
 
-- Node.js 22+
+- Node.js
 - npm
 - Docker e Docker Compose
 
-## Configuração
+## Como executar API + frontend
 
-Copie o arquivo `.env.example` para `.env` e ajuste os valores:
+### 1. Clone os dois repositórios
+
+```bash
+git clone https://github.com/KauaGabriell/refund-api.git
+git clone https://github.com/KauaGabriell/refund-frontend.git
+```
+
+### 2. Configure e execute a API
+
+Entre na pasta da API:
+
+```bash
+cd refund-api
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+Crie o arquivo `.env` com base no `.env.example`:
 
 ```env
 PORT=1111
@@ -53,13 +96,7 @@ JWT_SECRET=change-me
 ```
 
 > [!IMPORTANT]
-> Use uma chave forte em `JWT_SECRET` fora do ambiente de estudo.
-
-## Instalação
-
-```bash
-npm install
-```
+> Troque `JWT_SECRET` por uma chave forte fora de ambiente de estudo.
 
 Suba o banco:
 
@@ -90,6 +127,24 @@ A API ficará disponível em:
 ```txt
 http://localhost:1111
 ```
+
+### 3. Execute o frontend
+
+Em outro terminal:
+
+```bash
+cd refund-frontend
+npm install
+npm run dev
+```
+
+O Vite exibirá a URL local do frontend, normalmente:
+
+```txt
+http://localhost:5173
+```
+
+Com os dois projetos rodando, o frontend já conseguirá autenticar usuários, enviar comprovantes, criar reembolsos e listar solicitações pela API.
 
 ## Scripts
 
@@ -238,13 +293,13 @@ Tamanho máximo:
 3MB
 ```
 
-Os arquivos são salvos em:
+Arquivos enviados são servidos por:
 
 ```txt
-tmp/uploads
+http://localhost:1111/uploads/<filename>
 ```
 
-## Estrutura
+## Estrutura principal
 
 ```txt
 src/
@@ -274,4 +329,4 @@ Enums:
 
 ## Observações
 
-Este projeto é voltado para estudo. Ainda não possui suíte de testes automatizados.
+Este projeto ainda é focado em estudo. A integração com o frontend foi uma parte importante do aprendizado, principalmente para entender autenticação, envio de token, upload com `multipart/form-data`, permissões e consumo de rotas protegidas.
